@@ -34,3 +34,6 @@ const users_schema=new mongoose.Schema({
         required:true,
     }
 })
+
+// MODEL
+const my_users=mongoose.model('Users',users_schema);
