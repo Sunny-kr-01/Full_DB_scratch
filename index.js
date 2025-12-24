@@ -36,16 +36,33 @@ const users_schema=new mongoose.Schema({
         type:String,
         required:true,
     }
-})
+},{timestamps:true})
 
 // MODEL
 const my_users=mongoose.model('Users',users_schema);
 
-app.route('/json/users')
-.get((req,res)=>{
-    res.json({status : "Pending"})
+app.route('/json/users/:id')
+.get(async(req,res)=>{
+    const id=req.params.id
+    const user=await my_users.findById(id);
+    res.json(user)
 })
-.post(async(req,res)=>{
+.patch(async(req,res)=>{
+    const id=req.params.id
+    const user=await my_users.findByIdAndUpdate(id,{
+        last_name:"changed"
+    });
+    res.json({status:"success"})
+})
+.delete(async(req,res)=>{
+    const id=req.params.id
+    const user=await my_users.findByIdAndDelete(id);
+    res.json({status:"success"})
+})
+
+
+
+app.post('/json/users',async(req,res)=>{
     const body=req.body;
     const result=await my_users.create(
         {
@@ -61,6 +78,10 @@ app.route('/json/users')
 
 app.get('/',(req,res)=>{
     res.end("Home Page")
+})
+app.get('/json/users',async(req,res)=>{
+    const users= await my_users.find();
+    res.json(users)
 })
 app.get('/users',async(req,res)=>{
     const users=await my_users.find();
